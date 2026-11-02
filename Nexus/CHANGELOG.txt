@@ -1,0 +1,16 @@
+Party-Up 0.6.0 - Initial Nexus release
+
+- Party Node research beside Adventurers' Guild and a native build-menu entry.
+- Five individual class-filtered inputs and one output; five members maximum.
+- Compact gear popup for the selected lineup and waiting counts.
+- Empty meetup room with actual buffered adventurers walking around the table.
+- Manual Send now by default; Auto Send research unlocks a native + slot upgrade.
+- Whole-party receiver capacity checks for manual and automatic sends.
+- Atomic delivery: no partial transfer if receiver space changes before admission.
+- Real internal occupancy and queued arrivals counted for storage/roster receivers.
+- Compatible free dungeon/Party inputs filled through one party output connection.
+- Wider 384 x 224 node and immediate green-input/blue-output arrow initialization.
+- Saved settings, original adventurer data, native upgrade copying and migration.
+- Legacy oversized buffers preserved in a recoverable reserve.
+- 114 runtime and UI checks passed in a disposable, save-blocked diagnostic kingdom.
+- Nexus thumbnail follows the shared KINGDOM .INC parchment template.
