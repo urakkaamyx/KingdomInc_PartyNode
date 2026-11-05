@@ -1,18 +1,19 @@
-Party-Up 0.6.0 for Kingdom .Inc
+Party-Up 0.7.0 for Kingdom .Inc
 ================================
 
 Assemble an exact party of up to five adventurers, then send everyone together.
 
 REQUIRES
-Kingdom .Inc for Windows x64 (Unity Mono) and BepInEx 5.x, installed separately.
-Tested with BepInEx 5.4.23.6. Loader releases:
+Kingdom .Inc for Windows x64, BepInEx 5.x Windows x64, and Foundation 0.5.0 or later,
+installed separately. Loader releases:
 https://github.com/BepInEx/BepInEx/releases
 
 INSTALL
-1. Close the game. Install BepInEx 5.x Windows x64 if it is not already installed.
+1. Close the game and install the requirements above.
 2. Extract this ZIP into the folder containing KingdomInc.exe, merging BepInEx.
 3. The mod DLL belongs at BepInEx/plugins/PartyNode/PartyNode.dll.
-4. Start the game. Research Party Node beside Adventurers' Guild, then build it.
+4. Start the game. Open Tech Tree > Mods > Party-Up and research Party Node after
+   unlocking Adventurers' Guild. Build Party Node from Utility.
 
 USE
 Use the gear to configure a lineup of at most five members total. The five green
@@ -42,10 +43,6 @@ Earlier enabled Auto Send popup settings migrate to an installed native upgrade.
 Before uninstalling, send all waiting members, delete Party Nodes, save and close
 the game. Keep the mod installed when loading a kingdom that contains its nodes.
 Back up your kingdom before adding or removing mods.
-
-MANUAL INSTALLATION
-Vortex deployment has not been verified. Do not install BepInEx 6/IL2CPP for this DLL.
-No other gameplay mod is required. Broad third-party mod compatibility is untested.
 
 CREDITS
 Mod code and generated custom artwork by Urakka. Game UI and class sprites are

@@ -15,6 +15,7 @@ using Assets.Source.Util;
 using BepInEx;
 using HarmonyLib;
 using LightJson;
+using KingdomFoundation.Api;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -57,7 +58,20 @@ namespace KingdomPartyNode
             var fixture = new GamePlayer(); GamePlayer.Current = fixture;
             fixture.Flows.Add(new FlowDiagram { Label = "Party diagnostic" });
             var tech = TechNode.Get(Party.TechId);
-            Check(tech != null && tech.Previous.Identifier == "adventurers_guild" && tech.IsLocked, "Research requires Adventurers' Guild");
+            Check(tech != null && tech.Previous == null && tech.AdditionalRequirements.Contains("adventurers_guild") && tech.IsLocked,
+                "Mods research retains Adventurers' Guild prerequisite");
+            Check(FoundationApi.TechNodes.TryGet(Party.TechId, out var registeredParty)
+                && registeredParty == partyResearch && ((INativeTechNode)registeredParty).NativeNode == tech
+                && ((IModTechNode)registeredParty).Mod.Id == Id && ((IModTechNode)registeredParty).Mod.Name == "Party-Up",
+                "Foundation owns Party Node research in the Party-Up category");
+            Check(FoundationApi.TechNodes.TryGet(Party.AutoSendTechId, out var registeredUpgrade)
+                && registeredUpgrade == autoSendResearch && ((IModTechNode)registeredUpgrade).Mod.Id == Id,
+                "Foundation owns Auto Send in the same category with stable saved research IDs");
+            Check(FoundationApi.WorkspaceNodes.TryGet(Party.TypeId, out var registeredType)
+                && registeredType == partyType && registeredType.CreateInstance() is Party
+                && registeredType.Definition.RequiredTechId == Party.TechId,
+                "Foundation owns workspace construction with the existing Party save type");
+            Check(!new Party().IsPurchaseable(fixture), "Locked research prevents Party Node purchases");
             fixture.AddTech("adventurers_guild");
             Check(!tech.IsLocked && tech.IsAvailable, "Research becomes available at guild unlock");
             fixture.AddTech(tech);
@@ -463,7 +477,13 @@ namespace KingdomPartyNode
                     Check(!party.World.GetComponent<PartyWorld>().Settings.IsOpen, "Right-click cancel closes configuration popup");
                     GameUI.Instance.ToggleTechMenu(true);
                     TechTreeMenu.Instance.ShowTechTree(null, true);
-                    Check(TechTreeMenu.Instance.Nodes.Any(n => n.Tech.Identifier == Party.TechId), "Party research renders in actual tech tree");
+                    Check(!TechTreeMenu.Instance.Nodes.Any(n => n.Tech.Identifier == Party.TechId),
+                        "Party Node research stays out of Base Game research");
+                    var tabs = TechTreeMenu.Instance.GetComponent<KingdomFoundation.TechTreeTabs>();
+                    Check(tabs != null, "Foundation navigation attaches to the native tech tree");
+                    ((Button)AccessTools.Field(typeof(KingdomFoundation.TechTreeTabs), "ModsButton").GetValue(tabs)).onClick.Invoke();
+                    Check(TechTreeMenu.Instance.Nodes.Count(n => n.Tech.Identifier == Party.TechId) == 1,
+                        "Mods tab shows exactly one Party Node in its Party-Up category");
                 }
                 catch (Exception ex) { error = ex.ToString(); }
             }
@@ -492,7 +512,8 @@ namespace KingdomPartyNode
                 try { Capture(Path.Combine(directory, "party-auto-send-research.png")); }
                 catch (Exception ex) { error = ex.ToString(); }
             }
-            var result = new JsonObject { { "passed", error == null }, { "savedKingdomLoaded", false }, { "saveWritesBlocked", true }, { "testedAtUtc", DateTime.UtcNow.ToString("O") } };
+            var result = new JsonObject { { "passed", error == null }, { "savedKingdomLoaded", false }, { "saveWritesBlocked", true }, { "testedAtUtc", DateTime.UtcNow.ToString("O") },
+                { "pluginVersion", Version }, { "foundationVersion", typeof(FoundationApi).Assembly.GetName().Version.ToString() } };
             var names = new JsonArray(); foreach (string check in checks) names.Add(check); result["checks"] = names;
             if (error != null) result["error"] = error;
             File.WriteAllText(Path.Combine(directory, "runtime-tests.json"), result.ToString(true));

@@ -7,11 +7,12 @@ using Assets.Source.Items;
 using Assets.Source.Items.Type;
 using Assets.Source.Player;
 using LightJson;
+using KingdomFoundation.Api;
 using UnityEngine;
 
 namespace KingdomPartyNode
 {
-    public sealed class Party : FlowElement
+    public sealed class Party : WorkspaceNode
     {
         public const string TypeId = "Party", TechId = "party_node", AutoSendTechId = "party_node_auto_send";
         public const int SlotCount = 5, MaxPerArchetype = 5;
@@ -25,7 +26,6 @@ namespace KingdomPartyNode
         readonly List<InventoryItem> recovered = new List<InventoryItem>();
         bool legacyAutoSend;
 
-        public override string ElementType => TypeId;
         public override string Label => "Party Node";
         public override string IconName => PartyArtwork.RoomIconId;
         public override ElementCategory Category => ElementCategory.Utility;
@@ -49,7 +49,7 @@ namespace KingdomPartyNode
             }
         }
 
-        public Party()
+        public Party() : base(TypeId)
         {
             RequiredTech = TechId;
             Description = "Assemble a party of up to 5 adventurers total. Set each archetype's required count; 0 disables it. " +

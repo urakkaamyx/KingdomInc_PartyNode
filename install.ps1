@@ -1,5 +1,11 @@
 $ErrorActionPreference = 'Stop'
 $gameRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\..')).Path
+if (Get-CimInstance Win32_Process -Filter "Name='KingdomInc.exe'" | Where-Object { $_.ExecutablePath -eq (Join-Path $gameRoot 'KingdomInc.exe') }) {
+    throw 'Close Kingdom .Inc before installing Party-Up.'
+}
+if (-not (Test-Path -LiteralPath (Join-Path $gameRoot 'BepInEx\plugins\Foundation\Foundation.dll'))) {
+    throw 'Install Foundation 0.5.0 or later before installing Party-Up.'
+}
 dotnet build (Join-Path $PSScriptRoot 'PartyNode.csproj') -c Release --nologo
 if ($LASTEXITCODE -ne 0) { throw 'Party Node build failed.' }
 $destination = Join-Path $gameRoot 'BepInEx\plugins\PartyNode'

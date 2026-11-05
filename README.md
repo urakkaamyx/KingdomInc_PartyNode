@@ -1,6 +1,6 @@
 # Party-Up
 
-Party-Up adds a configurable Party Node to Kingdom Inc. Assemble a party of up to five adventurers, then send the group together when its destination has enough room.
+Party-Up adds a configurable Party Node to Kingdom .Inc. Assemble a party of up to five adventurers, then send the group together when its destination has enough room.
 
 The mod is published as **Party-Up**. Its plugin, source project, and in-game building are named **PartyNode / Party Node**.
 
@@ -15,19 +15,17 @@ The mod is published as **Party-Up**. Its plugin, source project, and in-game bu
 
 ## Requirements
 
-Kingdom Inc. for Windows x64 using the Mono runtime, with BepInEx 5.x installed separately. The current release has been checked with BepInEx 5.4.23.6.
-
-No other gameplay mod is required. BepInEx, Harmony, and game assemblies are supplied by your local installation.
+Kingdom .Inc for Windows x64, BepInEx 5.x Windows x64, and Foundation 0.5.0 or later, installed separately.
 
 ## Installation
 
-1. Close Kingdom Inc.
+1. Close Kingdom .Inc and install the requirements above.
 2. Download the player ZIP from [GitHub Releases](https://github.com/urakkaamyx/KingdomInc_PartyNode/releases) or the [Party-Up Nexus page](https://www.nexusmods.com/kingdominc/mods/5).
 3. Extract the ZIP into the folder containing `KingdomInc.exe`.
 4. Confirm the plugin is at `BepInEx/plugins/PartyNode/PartyNode.dll`.
-5. Start the game, research **Party Node** beside **Adventurers' Guild**, and build it.
+5. Start the game and open **Tech Tree → Mods → Party-Up**. Unlock **Adventurers' Guild**, research **Party Node**, and build it from **Utility**.
 
-To update, close the game and replace the existing `PartyNode.dll`. Avoid installing duplicate copies. Manual extraction is supported; Vortex deployment has not been verified.
+To update, close the game and replace the existing `PartyNode.dll`. Avoid installing duplicate copies.
 
 ## Configure a party
 
@@ -41,7 +39,7 @@ A count of zero removes that class from the lineup. **None / Adventurer** means 
 
 Manual sending is the default. Click **Send now** to dispatch waiting members, even if the selected lineup is incomplete. The destination must have room for every member being sent.
 
-For automatic dispatch, research **Auto Send**, then click the native **+ upgrade slot** at the bottom of a Party Node to buy and install it. Research alone leaves a node manual. Remove the upgrade through the same slot to return to manual dispatch.
+For automatic dispatch, open the **Party Node** research branch and research **Auto Send**, then click the **+ upgrade slot** at the bottom of a Party Node to buy and install it. Research alone leaves a node manual. Remove the upgrade through the same slot to return to manual dispatch.
 
 Auto Send waits until every selected slot is filled and the receiver can accept the entire group. A full party stays at the node if the receiver has insufficient space. An all-zero lineup sends nothing automatically.
 
@@ -56,31 +54,6 @@ Saves retain the lineup, waiting adventurers, pending output, and upgrades. Copi
 Older enabled Auto Send settings migrate to an installed upgrade. Legacy buffers containing more than five members are preserved in a recovery reserve and can be sent in batches of up to five.
 
 Keep this mod installed while loading a kingdom containing Party Nodes. Before uninstalling, send all waiting members, remove the Party Nodes, save the kingdom, and close the game. Then remove `BepInEx/plugins/PartyNode/PartyNode.dll`.
-
-## Building from source
-
-Requires Git and a .NET SDK with .NET Standard 2.1 support. Clone the repository into `_Mods/PartyNode` inside the game installation. From the game directory:
-
-```powershell
-git clone https://github.com/urakkaamyx/KingdomInc_PartyNode.git _Mods/PartyNode
-dotnet build _Mods/PartyNode/PartyNode.csproj -c Release
-```
-
-The project references the local game's `KingdomInc_Data/Managed` and `BepInEx/core` assemblies.
-
-With the game closed, build and install using:
-
-```powershell
-& _Mods/PartyNode/install.ps1
-```
-
-Run the established isolated diagnostic after building:
-
-```powershell
-& _Mods/PartyNode/verify-isolated.ps1
-```
-
-The diagnostic uses a separate runtime with a disposable kingdom, blocks saves and achievement triggers, and leaves a normal game session running. Results and screenshots remain local under `Verification/`.
 
 ## Credits
 

@@ -2,11 +2,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>0.6.0</Version>
+    <Version>0.7.0</Version>
     <AssemblyName>PartyNode</AssemblyName>
     <GameRoot>$(MSBuildThisFileDirectory)..\..\</GameRoot>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Foundation"><HintPath>$(GameRoot)BepInEx\plugins\Foundation\Foundation.dll</HintPath><Private>false</Private></Reference>
     <EmbeddedResource Include="Assets\party-meetup-v1.png" LogicalName="party-meetup-v1.png"/>
     <EmbeddedResource Include="Assets\party-meetup-empty-v2.png" LogicalName="party-meetup-empty-v2.png"/>
     <Reference Include="BepInEx"><HintPath>$(GameRoot)BepInEx\core\BepInEx.dll</HintPath><Private>false</Private></Reference>

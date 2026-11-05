@@ -15,19 +15,16 @@ Both manual and automatic sending require enough room for the entire batch. A fi
 Only the adventurers actually waiting in the node appear walking around the map table. Their original items, equipment and quality are preserved. The gear keeps configuration out of the workspace. Green arrows are inputs; the blue arrow is the output.
 
 [b]Unlock[/b]
-Research Party Node beside Adventurers' Guild in the main tech tree, then build it from the native build menu. Auto Send is researched inside Party Node's own tech tree.
+Open Tech Tree > Mods > Party-Up and research Party Node after unlocking Adventurers' Guild. Build it from Utility. Auto Send is researched inside Party Node's own tech tree.
 
 [b]Requirements[/b]
-Kingdom .Inc, Windows x64 Unity Mono edition, and [url=https://github.com/BepInEx/BepInEx/releases]BepInEx 5.x Windows x64[/url], installed separately. Tested with BepInEx 5.4.23.6. Do not use BepInEx 6/IL2CPP for this DLL. No other gameplay mod is required.
+Kingdom .Inc for Windows x64, [url=https://github.com/BepInEx/BepInEx/releases]BepInEx 5.x Windows x64[/url], and Foundation 0.5.0 or later, installed separately.
 
 [b]Installation[/b]
-Close the game. With BepInEx installed, extract the main ZIP into the folder containing KingdomInc.exe, merging the BepInEx folder. The DLL should be at BepInEx/plugins/PartyNode/PartyNode.dll. Restart the game. Manual installation is verified; Vortex deployment is untested.
+Close the game. With BepInEx installed, extract the main ZIP into the folder containing KingdomInc.exe, merging the BepInEx folder. The DLL should be at BepInEx/plugins/PartyNode/PartyNode.dll. Restart the game.
 
 [b]Updating and uninstalling[/b]
-Close the game before replacing the DLL. Saves retain the lineup, original adventurers, pending output and installed upgrade. Earlier enabled Auto Send popup settings migrate to an installed upgrade; older surplus members remain recoverable in batches of at most five. Before uninstalling, send waiting members, remove Party Nodes, save and close the game. Keep the mod installed when loading saves that still contain its nodes. Back up your kingdom before adding or removing mods.
-
-[b]Compatibility and validation[/b]
-114 model/runtime/UI checks passed in a disposable diagnostic kingdom with save writes blocked. Sharable Blueprints' native discovery recognizes the custom node. Broad third-party mod compatibility is untested. The optional source archive is for developers and requires local game/BepInEx references to build.
+Close the game before replacing the DLL. Saves retain the lineup, original adventurers, pending output and installed upgrade. Before uninstalling, send waiting members, remove Party Nodes, save and close the game. Keep the mod installed when loading saves that still contain its nodes. Back up your kingdom before adding or removing mods.
 
 [b]Credits and artwork[/b]
-Mod by Urakka. Custom room and thumbnail images were generated with the built-in image generation tool; the thumbnail follows the shared KINGDOM .INC parchment template. Native game UI and character sprites are read from the installed game, not redistributed. Thanks to the BepInEx and Harmony authors. Unofficial mod, not affiliated with the game's developer.
+Mod by Urakka. Custom room and thumbnail images were generated with the built-in image generation tool; the thumbnail follows the shared KINGDOM .INC parchment template. Native game UI and character sprites are read from the installed game, not redistributed. Thanks to the BepInEx and Harmony authors. Unofficial mod, not affiliated with the game's developer. Generative AI was used in parts of this.

@@ -1,3 +1,10 @@
+Party-Up 0.7.0
+
+- Party Node research now appears in Tech Tree > Mods > Party-Up.
+- Auto Send remains inside the Party Node research branch.
+- Requires Foundation 0.5.0 or later.
+- Existing research, parties, settings, equipment and installed upgrades carry forward.
+
 Party-Up 0.6.0 - Initial Nexus release
 
 - Party Node research beside Adventurers' Guild and a native build-menu entry.
@@ -12,5 +19,4 @@ Party-Up 0.6.0 - Initial Nexus release
 - Wider 384 x 224 node and immediate green-input/blue-output arrow initialization.
 - Saved settings, original adventurer data, native upgrade copying and migration.
 - Legacy oversized buffers preserved in a recoverable reserve.
-- 114 runtime and UI checks passed in a disposable, save-blocked diagnostic kingdom.
 - Nexus thumbnail follows the shared KINGDOM .INC parchment template.

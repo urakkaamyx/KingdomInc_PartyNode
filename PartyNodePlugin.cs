@@ -10,85 +10,68 @@ using Assets.Source.Player;
 using Behaviour.UI.Tooltip;
 using BepInEx;
 using HarmonyLib;
+using KingdomFoundation.Api;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace KingdomPartyNode
 {
-    [BepInPlugin(Id, "Party Node", Version)]
+    [BepInPlugin(Id, "Party-Up", Version)]
+    [BepInDependency("urakka.kingdominc.foundation", "0.5.0")]
     public sealed partial class PartyNodePlugin : BaseUnityPlugin
     {
-        public const string Id = "urakka.kingdominc.partynode", Version = "0.6.0";
+        public const string Id = "urakka.kingdominc.partynode", Version = "0.7.0";
         Harmony patches;
+        ITechNode partyResearch, autoSendResearch;
+        IWorkspaceNodeType partyType;
         internal static bool Diagnostic => Environment.GetCommandLineArgs().Contains("-party-node-smoke");
         void Awake()
         {
-            patches = new Harmony(Id);
-            patches.PatchAll(Assembly.GetExecutingAssembly());
+            try
+            {
+                patches = new Harmony(Id);
+                patches.PatchAll(Assembly.GetExecutingAssembly());
+                RegisterFoundation();
+            }
+            catch { DisposeRegistrations(); patches?.UnpatchSelf(); PartyArtwork.Dispose(); throw; }
             Logger.LogInfo("Party Node ready: five archetype inputs, adjustable counts, one party output.");
             if (Diagnostic) { Application.runInBackground = true; StartCoroutine(RuntimeCheck()); }
         }
-        void Start() => EnsureResearch();
-        void OnDestroy() { patches?.UnpatchSelf(); PartyArtwork.Dispose(); }
+        void OnDestroy() { DisposeRegistrations(); patches?.UnpatchSelf(); PartyArtwork.Dispose(); }
 
-        internal static void EnsureResearch()
+        void DisposeRegistrations()
         {
+            partyType?.Dispose(); autoSendResearch?.Dispose(); partyResearch?.Dispose();
+        }
+
+        void RegisterFoundation()
+        {
+            Assets.Source.Util.Translation.Init();
             var guild = TechNode.Get("adventurers_guild");
-            var party = TechNode.Get(Party.TechId);
-            if (party == null) party = TechNode.Add(new TechNode(Party.TechId) {
-                Name = "Party Node", Description = "Assemble up to 5 adventurers. Press Send now to release.",
-                NodeType = TechNodeType.FlowElement, Previous = guild,
-                RelativePosition = new Vector2Int(315, -180), IconName = PartyArtwork.IconId,
-                CostTier = guild.CostTier, CostCurrency = guild.CostCurrency, CostMultiplier = 0.5
-            });
-            if (TechNode.Get(Party.AutoSendTechId) == null)
-                TechNode.Add(new TechNode(Party.AutoSendTechId) {
-                    Name = "Auto Send", Description = "Unlocks a Party Node upgrade slot. " +
-                        "Use the node's + slot to buy Auto Send, which sends only complete selected lineups. Remove the upgrade to return to manual sending.",
-                    NodeType = TechNodeType.UpgradeSlot, Root = party, Previous = party,
-                    RelativePosition = new Vector2Int(270, 0), IconName = "Icons_17",
-                    CostTier = party.CostTier, CostCurrency = party.CostCurrency, CostMultiplier = 0.5,
-                    OnUnlock = player => {
-                        PartyAutoSend.Unlock(player);
-                        if (WorldFlowManager.Instance) WorldFlowManager.Instance.UpdateFlowElements(Party.TypeId);
-                    }
-                });
-        }
-
-        // Register before the player allocates its research array, including save loads.
-        [HarmonyPatch(typeof(GamePlayer), MethodType.Constructor)]
-        static class RegisterResearch { static void Prefix() => EnsureResearch(); }
-
-        [HarmonyPatch(typeof(FlowElement), nameof(FlowElement.Create))]
-        static class CreateParty
-        {
-            static bool Prefix(string name, ref FlowElement __result)
+            partyResearch = FoundationApi.CreateTechNode(new TechNodeDefinition(
+                Party.TechId, "Party Node", Id, "Party-Up", new Vector2(0, 0),
+                "Assemble up to 5 adventurers. Press Send now to release.", PartyArtwork.Sprite,
+                new TechNodeOptions(costTier: guild.CostTier, costMultiplier: 0.5,
+                    requirements: new[] { guild.Identifier })));
+            autoSendResearch = FoundationApi.CreateTechNode(new TechNodeDefinition(
+                Party.AutoSendTechId, "Auto Send", Id, "Party-Up", new Vector2(270, 0),
+                "Unlocks a Party Node upgrade slot. Use the node's + slot to buy Auto Send, " +
+                "which sends only complete selected lineups. Remove the upgrade to return to manual sending.",
+                research: new TechNodeOptions(nodeType: TechNodeType.UpgradeSlot,
+                    costTier: guild.CostTier, costMultiplier: 0.5,
+                    rootId: Party.TechId, previousId: Party.TechId, iconName: "Icons_17")));
+            autoSendResearch.Clicked += node =>
             {
-                if (name == Party.TypeId) { __result = new Party(); return false; }
-                // Resolve native types in their own assembly: Type.GetType in a
-                // Harmony-generated method can use the dynamic assembly context.
-                var native = typeof(FlowElement).Assembly.GetType("Assets.Source.Flow.Elements." + name);
-                if (native == null) return true;
-                __result = (FlowElement)Activator.CreateInstance(native); return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(FlowElement), nameof(FlowElement.GetAllTypes))]
-        static class IncludeParty
-        {
-            static Party preview;
-            static void Postfix(ref IEnumerable<FlowElement> __result) => __result = AddParty(__result);
-            static IEnumerable<FlowElement> AddParty(IEnumerable<FlowElement> originals)
-            {
-                bool included = false;
-                foreach (var element in originals)
-                {
-                    included |= element.ElementType == Party.TypeId;
-                    yield return element;
-                }
-                if (!included) yield return preview ?? (preview = new Party());
-            }
+                PartyAutoSend.Unlock(GamePlayer.Current);
+                if (WorldFlowManager.Instance) WorldFlowManager.Instance.UpdateFlowElements(Party.TypeId);
+            };
+            partyType = FoundationApi.RegisterWorkspaceNode(new WorkspaceNodeDefinition(
+                Party.TypeId, "Party Node", () => new Party(), Party.TechId,
+                new Vector2Int(Party.Width, Party.Height),
+                "Assemble a party of up to 5 adventurers total. Set each archetype's required count; 0 disables it. " +
+                "Press Send now to release the party. Research Auto Send, then install it in the node's + upgrade slot to automate complete lineups.",
+                icon: PartyArtwork.RoomSprite, costMultiplier: 0.5));
         }
 
         // Older saves store the previous taller node's port coordinates.
@@ -137,9 +120,10 @@ namespace KingdomPartyNode
         {
             static FlowPrefabManager owner;
             static FlowPrefabSet custom;
-            static bool Prefix(FlowPrefabManager __instance, string id, ref FlowPrefabSet __result)
+            // Retain the custom meetup view after Foundation resolves its default prefab.
+            static void Postfix(FlowPrefabManager __instance, string id, ref FlowPrefabSet __result)
             {
-                if (id != Party.TypeId) return true;
+                if (id != Party.TypeId) return;
                 if (!custom || owner != __instance)
                 {
                     var original = __instance.Get("Collector");
@@ -178,7 +162,7 @@ namespace KingdomPartyNode
                     AccessTools.Field(typeof(FlowPrefabSet), "<DetailSprite>k__BackingField").SetValue(custom, PartyArtwork.Sprite);
                     owner = __instance;
                 }
-                __result = custom; return false;
+                __result = custom;
             }
         }
 

@@ -14,6 +14,8 @@ New-Item -ItemType Directory -Path (Join-Path $bep 'plugins\PartyNode'),(Join-Pa
 New-Item -ItemType Junction -Path (Join-Path $bep 'core') -Value (Join-Path $gameRoot 'BepInEx\core') | Out-Null
 Copy-Item -LiteralPath (Join-Path $gameRoot 'BepInEx\config\BepInEx.cfg') -Destination (Join-Path $bep 'config\BepInEx.cfg')
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'bin\Release\netstandard2.1\PartyNode.dll') -Destination (Join-Path $bep 'plugins\PartyNode\PartyNode.dll')
+New-Item -ItemType Directory -Path (Join-Path $bep 'plugins\Foundation') -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path $gameRoot 'BepInEx\plugins\Foundation\Foundation.dll') -Destination (Join-Path $bep 'plugins\Foundation\Foundation.dll')
 $logPath = Join-Path $runtime 'diagnostic.log'
 $resultFolder = Join-Path $runtime '_Mods\PartyNode\Verification'
 $resultPath = Join-Path $resultFolder 'runtime-tests.json'

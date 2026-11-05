@@ -1,0 +1,12 @@
+Requirements
+
+Kingdom Inc. for Windows x64 (Mono).
+BepInEx 5, Windows x64 Mono (install separately):
+https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.6
+
+Foundation (latest release; 0.5.0 or later), required and installed separately:
+https://www.nexusmods.com/kingdominc/mods/18
+https://github.com/urakkaamyx/KingdomInc_Foundation/releases/latest
+
+Install the Foundation player package, then this mod. Close the game before
+replacing DLLs. Foundation and BepInEx are not bundled with this mod.
